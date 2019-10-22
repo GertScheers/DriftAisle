@@ -9,6 +9,17 @@ public class PlayerCar : MonoBehaviour
     [SerializeField] float turnspeed = 5;
     [SerializeField] float acceleration = 2;
 
+    Vector3 lastPosition;
+    float _sideSkidAmount = 0;
+
+    public float SideSkidAmount
+    {
+        get
+        {
+            return _sideSkidAmount;
+        }
+    }
+
     private void Start()
     {
         _rigidBody = GetComponent<Rigidbody>();
@@ -17,7 +28,7 @@ public class PlayerCar : MonoBehaviour
     private void Update()
     {
         SetRotationPoint();
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnspeed * Time.deltaTime);
+        SetSideSkid();
     }
 
     private void FixedUpdate()
@@ -25,6 +36,8 @@ public class PlayerCar : MonoBehaviour
 
         float accelerationInput = acceleration * (Input.GetMouseButton(0) ? 1 : Input.GetMouseButton(1) ? -1 : 0) * Time.fixedDeltaTime;
         _rigidBody.AddRelativeForce(Vector3.forward * accelerationInput);
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnspeed * Time.fixedDeltaTime);
     }
 
     private void SetRotationPoint()
@@ -40,6 +53,16 @@ public class PlayerCar : MonoBehaviour
             float rotationAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
             targetRotation = Quaternion.Euler(0, rotationAngle, 0);
         }
+    }
+
+    private void SetSideSkid()
+    {
+        Vector3 direction = transform.position - lastPosition;
+        Vector3 movement = transform.InverseTransformDirection(direction);
+
+        lastPosition = transform.position;
+
+        _sideSkidAmount = movement.x;
     }
 
 }

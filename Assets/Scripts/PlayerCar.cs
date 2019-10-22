@@ -11,6 +11,7 @@ public class PlayerCar : MonoBehaviour
 
     Vector3 lastPosition;
     float _sideSkidAmount = 0;
+    [SerializeField] float maxSpeed;
 
     public float SideSkidAmount
     {
@@ -33,11 +34,17 @@ public class PlayerCar : MonoBehaviour
 
     private void FixedUpdate()
     {
+        float speed = _rigidBody.velocity.magnitude;
 
-        float accelerationInput = acceleration * (Input.GetMouseButton(0) ? 1 : Input.GetMouseButton(1) ? -1 : 0) * Time.fixedDeltaTime;
-        _rigidBody.AddRelativeForce(Vector3.forward * accelerationInput);
+        if (speed > maxSpeed)
+            _rigidBody.velocity = _rigidBody.velocity.normalized * maxSpeed;
+        else
+        {
+            float accelerationInput = acceleration * (Input.GetMouseButton(0) ? 1 : Input.GetMouseButton(1) ? -1 : 0) * Time.fixedDeltaTime;
+            _rigidBody.AddRelativeForce(Vector3.forward * accelerationInput);
+        }
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnspeed * Time.fixedDeltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnspeed * Mathf.Clamp(speed / 1000, -1,1) * Time.fixedDeltaTime);
     }
 
     private void SetRotationPoint()

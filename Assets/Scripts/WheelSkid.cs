@@ -8,6 +8,7 @@ public class WheelSkid : MonoBehaviour
 
     Skidmarks skidmarkController;
     PlayerCar playerCar;
+    ParticleSystem TireSmoke;
 
     int lastSkidId = -1;
 
@@ -16,6 +17,7 @@ public class WheelSkid : MonoBehaviour
     {
         skidmarkController = FindObjectOfType<Skidmarks>();
         playerCar = GetComponentInParent<PlayerCar>();
+        TireSmoke = GetComponent<ParticleSystem>();
     }
 
     // Update is called once per frame
@@ -32,5 +34,17 @@ public class WheelSkid : MonoBehaviour
             lastSkidId = skidmarkController.AddSkidMark(transform.position, transform.up, intensity * intensityModifier, lastSkidId);
         else
             lastSkidId = -1;
+
+        if(intensity > 0.2f
+            && TireSmoke != null 
+            && !TireSmoke.isPlaying)
+        {
+                TireSmoke.Play();
+        }
+        else
+        {
+            if (TireSmoke != null && TireSmoke.isPlaying)
+                TireSmoke.Stop();
+        }
     }
 }

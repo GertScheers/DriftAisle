@@ -21,7 +21,7 @@ public class TopdownCamera : MonoBehaviour
         if (observable == null)
             return;
 
-        var newPos = new Vector3(_observableRigidBody.position.x + 25, 50, 0);
+        var newPos = new Vector3(_observableRigidBody.position.x - 20, 50, 0);
         var smoothPosition = Vector3.SmoothDamp(transform.position, newPos, ref currentSpeed, 0.1f);
         transform.position = smoothPosition;
     }

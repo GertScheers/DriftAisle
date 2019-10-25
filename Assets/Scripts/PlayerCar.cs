@@ -12,6 +12,7 @@ public class PlayerCar : MonoBehaviour
     Vector3 lastPosition;
     float _sideSkidAmount = 0;
     [SerializeField] float maxSpeed;
+    bool airborne;
 
     public float SideSkidAmount
     {
@@ -26,25 +27,62 @@ public class PlayerCar : MonoBehaviour
         _rigidBody = GetComponent<Rigidbody>();
     }
 
+    private void OnEnable()
+    {
+        AirborneScript.WentAirborne += WentAirborne;
+        AirborneScript.Landed += Landed;
+        FellDown.Died += Died;
+    }
+
+    private void OnDisable()
+    {
+        AirborneScript.WentAirborne -= WentAirborne;
+        AirborneScript.Landed -= Landed;
+        FellDown.Died -= Died;
+    }
+
+    private void Landed()
+    {
+        airborne = false;
+        _rigidBody.constraints = RigidbodyConstraints.FreezeRotationZ;
+    }
+
+    private void WentAirborne()
+    {
+        airborne = true;
+        _rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
+    }
+
+    private void Died()
+    {
+        //TODO: you are now dead. Probably move this method to other controller
+    }
+
     private void Update()
     {
-        SetRotationPoint();
-        SetSideSkid();
+        if (!airborne)
+        {
+            SetRotationPoint();
+            SetSideSkid();
+        }
     }
 
     private void FixedUpdate()
     {
         float speed = _rigidBody.velocity.magnitude;
 
-        if (speed > maxSpeed)
-            _rigidBody.velocity = _rigidBody.velocity.normalized * maxSpeed;
-        else
+        if (!airborne)
         {
-            float accelerationInput = acceleration * (Input.GetMouseButton(0) ? 1 : Input.GetMouseButton(1) ? -1 : 0) * Time.fixedDeltaTime;
-            _rigidBody.AddRelativeForce(Vector3.forward * accelerationInput);
-        }
+            if (speed > maxSpeed)
+                _rigidBody.velocity = _rigidBody.velocity.normalized * maxSpeed;
+            else
+            {
+                float accelerationInput = acceleration * (Input.GetMouseButton(0) ? 1 : Input.GetMouseButton(1) ? -1 : 0) * Time.fixedDeltaTime;
+                _rigidBody.AddRelativeForce(Vector3.forward * accelerationInput);
+            }
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnspeed * Mathf.Clamp(speed / 1000, -1,1) * Time.fixedDeltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnspeed * Mathf.Clamp(speed / 1000, -1, 1) * Time.fixedDeltaTime);
+        }
     }
 
     private void SetRotationPoint()

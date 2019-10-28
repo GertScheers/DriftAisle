@@ -31,7 +31,10 @@ public class WheelSkid : MonoBehaviour
 
         //If intensity is below certain value, don't skid.
         if (intensity > 0.2f)
+        {
             lastSkidId = skidmarkController.AddSkidMark(transform.position, transform.up, intensity * intensityModifier, lastSkidId);
+            FindObjectOfType<PlayerCar>().CalculateScore(intensity);
+        }
         else
             lastSkidId = -1;
 

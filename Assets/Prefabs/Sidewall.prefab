@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 4509659512080970977}
   m_Layer: 0
   m_Name: ScoreZones
-  m_TagString: Untagged
+  m_TagString: ScorePlus
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -138,7 +138,7 @@ GameObject:
   - component: {fileID: 4509659512503538197}
   m_Layer: 0
   m_Name: Sidewall
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

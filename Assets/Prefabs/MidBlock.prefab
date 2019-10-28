@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 961498168408131725}
   m_Layer: 0
   m_Name: ScoreZones
-  m_TagString: Untagged
+  m_TagString: ScorePlus
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 7010879281270943690}
   m_Layer: 0
   m_Name: MidBlock
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

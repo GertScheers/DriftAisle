@@ -12,6 +12,31 @@ PrefabInstance:
       propertyPath: m_Name
       value: CurvedWall Variant
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 9692eac70e05b2742b4259921291395f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 2502203975881118265, guid: 9692eac70e05b2742b4259921291395f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 4695666576454475813, guid: 9692eac70e05b2742b4259921291395f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: -3285082269449195769, guid: 9692eac70e05b2742b4259921291395f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: -7060726032509148205, guid: 9692eac70e05b2742b4259921291395f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 9692eac70e05b2742b4259921291395f,
         type: 3}
       propertyPath: m_LocalPosition.x

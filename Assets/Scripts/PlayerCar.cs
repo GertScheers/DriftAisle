@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerCar : MonoBehaviour
 {
     Quaternion targetRotation;
@@ -13,6 +15,10 @@ public class PlayerCar : MonoBehaviour
     float _sideSkidAmount = 0;
     [SerializeField] float maxSpeed;
     bool airborne;
+    float totalScore = 0;
+    float currentScore = 0;
+    [SerializeField] TextMeshProUGUI totalScoreText;
+    [SerializeField] TextMeshProUGUI currentScoreText;
 
     public float SideSkidAmount
     {
@@ -22,40 +28,10 @@ public class PlayerCar : MonoBehaviour
         }
     }
 
+    #region basics
     private void Start()
     {
         _rigidBody = GetComponent<Rigidbody>();
-    }
-
-    private void OnEnable()
-    {
-        AirborneScript.WentAirborne += WentAirborne;
-        AirborneScript.Landed += Landed;
-        FellDown.Died += Died;
-    }
-
-    private void OnDisable()
-    {
-        AirborneScript.WentAirborne -= WentAirborne;
-        AirborneScript.Landed -= Landed;
-        FellDown.Died -= Died;
-    }
-
-    private void Landed()
-    {
-        airborne = false;
-        _rigidBody.constraints = RigidbodyConstraints.FreezeRotationZ;
-    }
-
-    private void WentAirborne()
-    {
-        airborne = true;
-        _rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
-    }
-
-    private void Died()
-    {
-        //TODO: you are now dead. Probably move this method to other controller
     }
 
     private void Update()
@@ -84,14 +60,69 @@ public class PlayerCar : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnspeed * Mathf.Clamp(speed / 1000, -1, 1) * Time.fixedDeltaTime);
         }
     }
+    #endregion
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Wall")
+        {
+            if (collision.impulse.magnitude > 10f)
+            {
+                Debug.Log("Game Over");
+                FindObjectOfType<GameManager>().GameOver();
+            }
+            else
+            {
+                if(collision.impulse.magnitude < 2f)
+                {
+                    Debug.Log("Wall tap");
+                    //TODO: Give walltap bonus. Needs to have a cooldown! (1 second should be sufficient)
+                    currentScore += 500;
+                }
+                else
+                {
+                    Debug.Log("Hit wall");
+                    //TODO: Hit wall too hard, reset score
+                    currentScore = 0;
+                    currentScoreText.text = "Hit a wall!";
+                }
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Deadzone")
+        {
+            //TODO: dead / You've crashed
+            FindObjectOfType<GameManager>().GameOver();
+            return;
+        }
+        else if (other.gameObject.tag == "Airborne")
+        {
+            airborne = true;
+            _rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Airborne")
+        {
+            airborne = false;
+            _rigidBody.constraints = RigidbodyConstraints.FreezeRotationZ;
+        }
+    }
+
+    #region specificMethods
 
     private void SetRotationPoint()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Plane plane = new Plane(Vector3.up, Vector3.zero);
         float distance;
-        
-        if(plane.Raycast(ray, out distance))
+
+        if (plane.Raycast(ray, out distance))
         {
             Vector3 target = ray.GetPoint(distance);
             Vector3 direction = target - transform.position;
@@ -110,4 +141,11 @@ public class PlayerCar : MonoBehaviour
         _sideSkidAmount = movement.x;
     }
 
+    public void CalculateScore(float intensity)
+    {
+        currentScore += (intensity * _rigidBody.velocity.magnitude) / 3;
+        currentScoreText.text = "DRIFT: \n" + "+" + currentScore.ToString("0");
+    }
+
+    #endregion
 }

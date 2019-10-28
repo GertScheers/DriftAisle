@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6784925684724246092}
   m_Layer: 0
   m_Name: Slope
-  m_TagString: Untagged
+  m_TagString: Airborne
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

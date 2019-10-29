@@ -17,6 +17,7 @@ public class PlayerCar : MonoBehaviour
     bool airborne;
     float totalScore = 0;
     float currentScore = 0;
+    float walltapCD = 0;
     [SerializeField] TextMeshProUGUI totalScoreText;
     [SerializeField] TextMeshProUGUI currentScoreText;
 
@@ -53,7 +54,8 @@ public class PlayerCar : MonoBehaviour
                 _rigidBody.velocity = _rigidBody.velocity.normalized * maxSpeed;
             else
             {
-                float accelerationInput = acceleration * (Input.GetMouseButton(0) ? 1 : Input.GetMouseButton(1) ? -1 : 0) * Time.fixedDeltaTime;
+                //(Input.GetMouseButton(0) ? 1 : Input.GetMouseButton(1) ? -1 : 0) *
+                float accelerationInput = acceleration * Time.fixedDeltaTime;
                 _rigidBody.AddRelativeForce(Vector3.forward * accelerationInput);
             }
 
@@ -77,12 +79,19 @@ public class PlayerCar : MonoBehaviour
                 {
                     Debug.Log("Wall tap");
                     //TODO: Give walltap bonus. Needs to have a cooldown! (1 second should be sufficient)
-                    currentScore += 500;
+                    if (walltapCD < Time.time)
+                    {
+                        Debug.Log("Walltap");
+                        currentScore += 2000;
+                        //Adds a cooldown of 1 second
+                        walltapCD = Time.time + 1;
+                    }
+                    else
+                        Debug.Log("Walltap on CD");
                 }
                 else
                 {
                     Debug.Log("Hit wall");
-                    //TODO: Hit wall too hard, reset score
                     currentScore = 0;
                     currentScoreText.text = "Hit a wall!";
                 }

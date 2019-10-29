@@ -6,22 +6,26 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerCar : MonoBehaviour
 {
+    //Game related
     Quaternion targetRotation;
     Rigidbody _rigidBody;
-    [SerializeField] float turnspeed = 5;
-    [SerializeField] float acceleration = 2;
+    GameManager game;
 
+    //Utility
     Vector3 lastPosition;
     float _sideSkidAmount = 0;
-    [SerializeField] float maxSpeed;
-    bool crashed;
     bool airborne;
     float totalScore = 0;
     float currentScore = 0;
     float walltapCD = 0;
     float driftTime = 0;
+
+    //Serializable fields
+    [SerializeField] float turnspeed = 5;
+    [SerializeField] float acceleration = 2;
     [SerializeField] TextMeshProUGUI totalScoreText;
     [SerializeField] TextMeshProUGUI currentScoreText;
+    [SerializeField] float maxSpeed;
 
     public float SideSkidAmount
     {
@@ -35,39 +39,47 @@ public class PlayerCar : MonoBehaviour
     private void Start()
     {
         _rigidBody = GetComponent<Rigidbody>();
+        game = GameManager.Instance;
     }
 
     private void Update()
     {
-        if (!airborne && !crashed)
+        if (game.Playing)
         {
-            SetRotationPoint();
-            SetSideSkid();
-        }
-        if(driftTime <= Time.time)
-        {
-            totalScore += currentScore;
-            UpdateTotalScore();
-            currentScore = 0;
-            currentScoreText.text = "";
+            if (!airborne)
+            {
+                SetRotationPoint();
+                SetSideSkid();
+            }
+
+            if (driftTime <= Time.time)
+            {
+                totalScore += currentScore;
+                UpdateTotalScore();
+                currentScore = 0;
+                currentScoreText.text = "";
+            }
         }
     }
 
     private void FixedUpdate()
     {
-        float speed = _rigidBody.velocity.magnitude;
-
-        if (!airborne && !crashed)
+        if (game.Playing)
         {
-            if (speed > maxSpeed)
-                _rigidBody.velocity = _rigidBody.velocity.normalized * maxSpeed;
-            else
-            {
-                float accelerationInput = acceleration * Time.fixedDeltaTime;
-                _rigidBody.AddRelativeForce(Vector3.forward * accelerationInput);
-            }
+            float speed = _rigidBody.velocity.magnitude;
 
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnspeed * Mathf.Clamp(speed / 1000, -1, 1) * Time.fixedDeltaTime);
+            if (!airborne)
+            {
+                if (speed > maxSpeed)
+                    _rigidBody.velocity = _rigidBody.velocity.normalized * maxSpeed;
+                else
+                {
+                    float accelerationInput = acceleration * Time.fixedDeltaTime;
+                    _rigidBody.AddRelativeForce(Vector3.forward * accelerationInput);
+                }
+
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, turnspeed * Mathf.Clamp(speed / 1000, -1, 1) * Time.fixedDeltaTime);
+            }
         }
     }
     #endregion
@@ -118,11 +130,6 @@ public class PlayerCar : MonoBehaviour
             case "ScorePlus":
                 Debug.Log("ScorePlus");
                 totalScore += 200;
-                UpdateTotalScore();
-                break;
-            case "ScoreMinus":
-                Debug.Log("ScoreMinus");
-                totalScore -= 200;
                 UpdateTotalScore();
                 break;
             case "Airborne":

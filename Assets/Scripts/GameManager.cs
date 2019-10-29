@@ -3,24 +3,97 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance;
+
+    public GameObject gamePage;
+    public GameObject crashedPage;
+    public GameObject countdownPage;
+    public GameObject finishedPage;
+    bool _playing;
+
+    public bool Playing
+    {
+        get { return _playing; }
+    }
+
+    enum PageState
+    {
+        None,
+        Game,
+        Crashed,
+        Countdown,
+        Finished
+    }
+
     public void GameOver()
     {
-        Debug.Log("You crashed");
-        Invoke("RestartGame", 2f);
+        _playing = false;
+        SetPageState(PageState.Crashed);
     }
 
     public void Finished()
     {
-
+        _playing = false;
+        SetPageState(PageState.Finished);
+        //TODO: Check for highscores etc
     }
 
-    void RestartGame()
+    public void RestartGame()
     {
+        Debug.Log("restart");
         SceneManager.LoadScene(0);
     }
 
-    void NextLevel()
+    public void CountDownComplete()
+    {
+        _playing = true;
+        SetPageState(PageState.Game);
+    }
+
+    public void NextLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    private void SetPageState(PageState state)
+    {
+        switch (state)
+        {
+            case PageState.None:
+                gamePage.SetActive(false);
+                crashedPage.SetActive(false);
+                countdownPage.SetActive(false);
+                finishedPage.SetActive(false);
+                break;
+            case PageState.Game:
+                gamePage.SetActive(true);
+                crashedPage.SetActive(false);
+                countdownPage.SetActive(false);
+                finishedPage.SetActive(false);
+                break;
+            case PageState.Crashed:
+                gamePage.SetActive(false);
+                crashedPage.SetActive(true);
+                countdownPage.SetActive(false);
+                finishedPage.SetActive(false);
+                break;
+            case PageState.Countdown:
+                gamePage.SetActive(false);
+                crashedPage.SetActive(false);
+                countdownPage.SetActive(true);
+                finishedPage.SetActive(false);
+                break;
+            case PageState.Finished:
+                gamePage.SetActive(false);
+                crashedPage.SetActive(false);
+                countdownPage.SetActive(false);
+                finishedPage.SetActive(true);
+                break;
+        }
+    }
+
+    private void Awake()
+    {
+        Instance = this;
     }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4509659511128769708}
   m_Layer: 0
   m_Name: Obstacle1Score2
-  m_TagString: Untagged
+  m_TagString: ScorePlus
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4509659511128769706}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -33.89972, y: 24.897387, z: -14.41}
+  m_LocalPosition: {x: -33.89972, y: 24, z: -14.41}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 4509659512080970977}
@@ -231,7 +231,7 @@ GameObject:
   - component: {fileID: 4509659512564700836}
   m_Layer: 0
   m_Name: Obstacle1Score
-  m_TagString: Untagged
+  m_TagString: ScorePlus
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -244,7 +244,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4509659512564700834}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -33.89972, y: 24.897387, z: -9.635836}
+  m_LocalPosition: {x: -33.89972, y: 24, z: -9.635836}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 4509659512080970977}

@@ -9,6 +9,11 @@ public class GameManager : MonoBehaviour
         Invoke("RestartGame", 2f);
     }
 
+    public void Finished()
+    {
+
+    }
+
     void RestartGame()
     {
         SceneManager.LoadScene(0);

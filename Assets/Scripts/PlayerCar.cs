@@ -14,10 +14,12 @@ public class PlayerCar : MonoBehaviour
     Vector3 lastPosition;
     float _sideSkidAmount = 0;
     [SerializeField] float maxSpeed;
+    bool crashed;
     bool airborne;
     float totalScore = 0;
     float currentScore = 0;
     float walltapCD = 0;
+    float driftTime = 0;
     [SerializeField] TextMeshProUGUI totalScoreText;
     [SerializeField] TextMeshProUGUI currentScoreText;
 
@@ -37,10 +39,17 @@ public class PlayerCar : MonoBehaviour
 
     private void Update()
     {
-        if (!airborne)
+        if (!airborne && !crashed)
         {
             SetRotationPoint();
             SetSideSkid();
+        }
+        if(driftTime <= Time.time)
+        {
+            totalScore += currentScore;
+            UpdateTotalScore();
+            currentScore = 0;
+            currentScoreText.text = "";
         }
     }
 
@@ -48,13 +57,12 @@ public class PlayerCar : MonoBehaviour
     {
         float speed = _rigidBody.velocity.magnitude;
 
-        if (!airborne)
+        if (!airborne && !crashed)
         {
             if (speed > maxSpeed)
                 _rigidBody.velocity = _rigidBody.velocity.normalized * maxSpeed;
             else
             {
-                //(Input.GetMouseButton(0) ? 1 : Input.GetMouseButton(1) ? -1 : 0) *
                 float accelerationInput = acceleration * Time.fixedDeltaTime;
                 _rigidBody.AddRelativeForce(Vector3.forward * accelerationInput);
             }
@@ -75,16 +83,15 @@ public class PlayerCar : MonoBehaviour
             }
             else
             {
-                if(collision.impulse.magnitude < 2f)
+                if (collision.impulse.magnitude < 2f)
                 {
                     Debug.Log("Wall tap");
-                    //TODO: Give walltap bonus. Needs to have a cooldown! (1 second should be sufficient)
-                    if (walltapCD < Time.time)
+                    if (walltapCD < Time.time && _rigidBody.velocity.magnitude > 30)
                     {
                         Debug.Log("Walltap");
                         currentScore += 2000;
-                        //Adds a cooldown of 1 second
-                        walltapCD = Time.time + 1;
+                        //Adds a cooldown of 2 seconds
+                        walltapCD = Time.time + 2;
                     }
                     else
                         Debug.Log("Walltap on CD");
@@ -101,16 +108,31 @@ public class PlayerCar : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Deadzone")
+        switch (other.gameObject.tag)
         {
-            //TODO: dead / You've crashed
-            FindObjectOfType<GameManager>().GameOver();
-            return;
-        }
-        else if (other.gameObject.tag == "Airborne")
-        {
-            airborne = true;
-            _rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
+            //TODO: Game over / Crash
+            case "Deadzone":
+                _rigidBody.constraints = RigidbodyConstraints.FreezeAll;
+                FindObjectOfType<GameManager>().GameOver();
+                break;
+            case "ScorePlus":
+                Debug.Log("ScorePlus");
+                totalScore += 200;
+                UpdateTotalScore();
+                break;
+            case "ScoreMinus":
+                Debug.Log("ScoreMinus");
+                totalScore -= 200;
+                UpdateTotalScore();
+                break;
+            case "Airborne":
+                airborne = true;
+                _rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
+                break;
+            case "Finish":
+                break;
+            default:
+                break;
         }
     }
 
@@ -152,9 +174,14 @@ public class PlayerCar : MonoBehaviour
 
     public void CalculateScore(float intensity)
     {
+        driftTime = Time.time + 1;
         currentScore += (intensity * _rigidBody.velocity.magnitude) / 3;
         currentScoreText.text = "DRIFT: \n" + "+" + currentScore.ToString("0");
     }
 
+    private void UpdateTotalScore()
+    {
+        totalScoreText.text = "Score: \n" + totalScore.ToString("0");
+    }
     #endregion
 }

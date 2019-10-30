@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -39,7 +37,7 @@ public class PlayerCar : MonoBehaviour
     private void Start()
     {
         _rigidBody = GetComponent<Rigidbody>();
-        game = GameManager.Instance;
+        game = FindObjectOfType<GameManager>();
     }
 
     private void Update()
@@ -91,7 +89,7 @@ public class PlayerCar : MonoBehaviour
             if (collision.impulse.magnitude > 10f)
             {
                 Debug.Log("Game Over");
-                FindObjectOfType<GameManager>().GameOver();
+                game.GameOver();
             }
             else
             {
@@ -125,7 +123,7 @@ public class PlayerCar : MonoBehaviour
             //TODO: Game over / Crash
             case "Deadzone":
                 _rigidBody.constraints = RigidbodyConstraints.FreezeAll;
-                FindObjectOfType<GameManager>().GameOver();
+                game.GameOver();
                 break;
             case "ScorePlus":
                 Debug.Log("ScorePlus");
@@ -139,7 +137,8 @@ public class PlayerCar : MonoBehaviour
             case "Finish":
                 totalScore += currentScore;
                 UpdateTotalScore();
-                FindObjectOfType<GameManager>().Finished();
+                game.Score = int.Parse(totalScore.ToString());
+                game.Finished();
                 break;
             default:
                 break;

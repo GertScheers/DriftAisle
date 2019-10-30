@@ -10,10 +10,16 @@ public class GameManager : MonoBehaviour
     public GameObject countdownPage;
     public GameObject finishedPage;
     bool _playing;
+    int _score;
 
     public bool Playing
     {
         get { return _playing; }
+    }
+    public int Score
+    {
+        get { return _score; }
+        set { _score = value; }
     }
 
     enum PageState
@@ -36,6 +42,11 @@ public class GameManager : MonoBehaviour
         _playing = false;
         SetPageState(PageState.Finished);
         //TODO: Check for highscores etc
+        int sceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int savedScore = PlayerPrefs.GetInt("HighScoreLevel" + sceneIndex);
+
+        if (Score > savedScore)
+            PlayerPrefs.SetInt("HighScore", Score);
     }
 
     public void RestartGame()

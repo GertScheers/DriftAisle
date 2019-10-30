@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Debug.Log("restart");
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
     public void CountDownComplete()

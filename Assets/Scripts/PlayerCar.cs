@@ -137,6 +137,9 @@ public class PlayerCar : MonoBehaviour
                 _rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
                 break;
             case "Finish":
+                totalScore += currentScore;
+                UpdateTotalScore();
+                FindObjectOfType<GameManager>().Finished();
                 break;
             default:
                 break;
@@ -181,7 +184,7 @@ public class PlayerCar : MonoBehaviour
 
     public void CalculateScore(float intensity)
     {
-        driftTime = Time.time + 1;
+        driftTime = Time.time + 0.5f;
         currentScore += (intensity * _rigidBody.velocity.magnitude) / 3;
         currentScoreText.text = "DRIFT: \n" + "+" + currentScore.ToString("0");
     }

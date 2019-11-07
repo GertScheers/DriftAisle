@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -13,8 +14,8 @@ public class PlayerCar : MonoBehaviour
     Vector3 lastPosition;
     float _sideSkidAmount = 0;
     bool airborne;
-    float totalScore = 0;
-    float currentScore = 0;
+    int totalScore = 0;
+    int currentScore = 0;
     float walltapCD = 0;
     float driftTime = 0;
 
@@ -137,7 +138,7 @@ public class PlayerCar : MonoBehaviour
             case "Finish":
                 totalScore += currentScore;
                 UpdateTotalScore();
-                game.Score = int.Parse(totalScore.ToString());
+                game.Score = totalScore;
                 game.Finished();
                 break;
             default:
@@ -184,7 +185,7 @@ public class PlayerCar : MonoBehaviour
     public void CalculateScore(float intensity)
     {
         driftTime = Time.time + 0.5f;
-        currentScore += (intensity * _rigidBody.velocity.magnitude) / 3;
+        currentScore += (int)Math.Round(((intensity * _rigidBody.velocity.magnitude) / 3), 0);
         currentScoreText.text = "DRIFT: \n" + "+" + currentScore.ToString("0");
     }
 

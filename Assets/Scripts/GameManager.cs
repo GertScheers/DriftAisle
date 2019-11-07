@@ -8,9 +8,11 @@ public class GameManager : MonoBehaviour
     public GameObject gamePage;
     public GameObject crashedPage;
     public GameObject countdownPage;
-    public GameObject finishedPage;
+    public GameObject finishedFailedPage;
+    public GameObject finishedSuccesPage;
     bool _playing;
     int _score;
+    int _targetScore;
 
     public bool Playing
     {
@@ -21,6 +23,11 @@ public class GameManager : MonoBehaviour
         get { return _score; }
         set { _score = value; }
     }
+    public int TargetScore
+    {
+        get { return _targetScore; }
+        set { _targetScore = value; }
+    }
 
     enum PageState
     {
@@ -28,7 +35,8 @@ public class GameManager : MonoBehaviour
         Game,
         Crashed,
         Countdown,
-        Finished
+        FinishedFailed,
+        FinishedSucces
     }
 
     public void GameOver()
@@ -40,7 +48,13 @@ public class GameManager : MonoBehaviour
     public void Finished()
     {
         _playing = false;
-        SetPageState(PageState.Finished);
+        TargetScore = int.Parse(TargetScores.Scores[SceneManager.GetActiveScene().buildIndex - 1]);
+
+        if (Score > TargetScore)
+            SetPageState(PageState.FinishedSucces);
+        else
+            SetPageState(PageState.FinishedFailed);
+
         //TODO: Check for highscores etc
         int sceneIndex = SceneManager.GetActiveScene().buildIndex;
         int savedScore = PlayerPrefs.GetInt("HighScoreLevel" + sceneIndex);
@@ -66,6 +80,11 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
+    public void ToMainMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     private void SetPageState(PageState state)
     {
         switch (state)
@@ -74,31 +93,43 @@ public class GameManager : MonoBehaviour
                 gamePage.SetActive(false);
                 crashedPage.SetActive(false);
                 countdownPage.SetActive(false);
-                finishedPage.SetActive(false);
+                finishedFailedPage.SetActive(false);
+                finishedSuccesPage.SetActive(false);
                 break;
             case PageState.Game:
                 gamePage.SetActive(true);
                 crashedPage.SetActive(false);
                 countdownPage.SetActive(false);
-                finishedPage.SetActive(false);
+                finishedFailedPage.SetActive(false);
+                finishedSuccesPage.SetActive(false);
                 break;
             case PageState.Crashed:
                 gamePage.SetActive(false);
                 crashedPage.SetActive(true);
                 countdownPage.SetActive(false);
-                finishedPage.SetActive(false);
+                finishedFailedPage.SetActive(false);
+                finishedSuccesPage.SetActive(false);
                 break;
             case PageState.Countdown:
                 gamePage.SetActive(false);
                 crashedPage.SetActive(false);
                 countdownPage.SetActive(true);
-                finishedPage.SetActive(false);
+                finishedFailedPage.SetActive(false);
+                finishedSuccesPage.SetActive(false);
                 break;
-            case PageState.Finished:
+            case PageState.FinishedFailed:
                 gamePage.SetActive(false);
                 crashedPage.SetActive(false);
                 countdownPage.SetActive(false);
-                finishedPage.SetActive(true);
+                finishedFailedPage.SetActive(true);
+                finishedSuccesPage.SetActive(false);
+                break;
+            case PageState.FinishedSucces:
+                gamePage.SetActive(false);
+                crashedPage.SetActive(false);
+                countdownPage.SetActive(false);
+                finishedFailedPage.SetActive(false);
+                finishedSuccesPage.SetActive(true);
                 break;
         }
     }

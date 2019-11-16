@@ -34,6 +34,9 @@ public class PlayerCar : MonoBehaviour
         }
     }
 
+    public bool SteerLeft { get; set; }
+    public bool SteerRight { get; set; }
+
     #region basics
     private void Start()
     {
@@ -159,7 +162,7 @@ public class PlayerCar : MonoBehaviour
 
     private void SetRotationPoint()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        /*Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Plane plane = new Plane(Vector3.up, Vector3.zero);
         float distance;
 
@@ -169,6 +172,21 @@ public class PlayerCar : MonoBehaviour
             Vector3 direction = target - transform.position;
             float rotationAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
             targetRotation = Quaternion.Euler(0, rotationAngle, 0);
+        }*/
+
+        var currentRotation = _rigidBody.rotation.y;
+
+        if (SteerLeft)
+        {
+            targetRotation = Quaternion.Euler(0, 10, 0);
+        }
+        else if (SteerRight)
+        {
+            targetRotation = Quaternion.Euler(0, 170, 0);
+        }
+        else
+        {
+            targetRotation = Quaternion.Euler(0, 90, 0);
         }
     }
 
